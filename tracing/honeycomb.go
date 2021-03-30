@@ -1,9 +1,6 @@
 package tracing
 
 import (
-	"fmt"
-
-	"github.com/honeycombio/opentelemetry-exporter-go/honeycomb"
 	export "go.opentelemetry.io/otel/sdk/export/trace"
 )
 
@@ -17,18 +14,14 @@ func (h Honeycomb) IsConfigured() bool {
 	return h.APIKey != "" && h.Dataset != ""
 }
 
-func (h Honeycomb) Exporter() (export.SpanSyncer, error) {
-	exporter, err := honeycomb.NewExporter(
-		honeycomb.Config{
-			APIKey: h.APIKey,
+func (h Honeycomb) Exporter() (export.SpanExporter, error) {
+	// TODO: ServiceName?
+	return OTLP{
+		Address: "api.honeycomb.io:443",
+		Headers: map[string]string{
+			"x-honeycomb-team":    h.APIKey,
+			"x-honeycomb-dataset": h.Dataset,
 		},
-		honeycomb.TargetingDataset(h.Dataset),
-		honeycomb.WithServiceName(h.ServiceName),
-	)
-	if err != nil {
-		err = fmt.Errorf("failed to create honeycomb exporter: %w", err)
-		return nil, err
-	}
-
-	return exporter, nil
+		UseTLS: true,
+	}.Exporter()
 }

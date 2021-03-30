@@ -20,7 +20,7 @@ func (j Jaeger) IsConfigured() bool {
 }
 
 // Exporter returns a SpanExporter to sync spans to Jaeger
-func (j Jaeger) Exporter() (export.SpanSyncer, error) {
+func (j Jaeger) Exporter() (export.SpanExporter, error) {
 	exporter, err := jaeger.NewRawExporter(
 		jaeger.WithCollectorEndpoint(j.Endpoint),
 		jaeger.WithProcess(jaeger.Process{

@@ -5,16 +5,16 @@ import (
 	"context"
 	"sync"
 
-	"go.opentelemetry.io/otel/api/trace"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type FakeTracer struct {
-	StartStub        func(context.Context, string, ...trace.StartOption) (context.Context, trace.Span)
+	StartStub        func(context.Context, string, ...trace.SpanOption) (context.Context, trace.Span)
 	startMutex       sync.RWMutex
 	startArgsForCall []struct {
 		arg1 context.Context
 		arg2 string
-		arg3 []trace.StartOption
+		arg3 []trace.SpanOption
 	}
 	startReturns struct {
 		result1 context.Context
@@ -28,13 +28,13 @@ type FakeTracer struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeTracer) Start(arg1 context.Context, arg2 string, arg3 ...trace.StartOption) (context.Context, trace.Span) {
+func (fake *FakeTracer) Start(arg1 context.Context, arg2 string, arg3 ...trace.SpanOption) (context.Context, trace.Span) {
 	fake.startMutex.Lock()
 	ret, specificReturn := fake.startReturnsOnCall[len(fake.startArgsForCall)]
 	fake.startArgsForCall = append(fake.startArgsForCall, struct {
 		arg1 context.Context
 		arg2 string
-		arg3 []trace.StartOption
+		arg3 []trace.SpanOption
 	}{arg1, arg2, arg3})
 	stub := fake.StartStub
 	fakeReturns := fake.startReturns
@@ -55,13 +55,13 @@ func (fake *FakeTracer) StartCallCount() int {
 	return len(fake.startArgsForCall)
 }
 
-func (fake *FakeTracer) StartCalls(stub func(context.Context, string, ...trace.StartOption) (context.Context, trace.Span)) {
+func (fake *FakeTracer) StartCalls(stub func(context.Context, string, ...trace.SpanOption) (context.Context, trace.Span)) {
 	fake.startMutex.Lock()
 	defer fake.startMutex.Unlock()
 	fake.StartStub = stub
 }
 
-func (fake *FakeTracer) StartArgsForCall(i int) (context.Context, string, []trace.StartOption) {
+func (fake *FakeTracer) StartArgsForCall(i int) (context.Context, string, []trace.SpanOption) {
 	fake.startMutex.RLock()
 	defer fake.startMutex.RUnlock()
 	argsForCall := fake.startArgsForCall[i]

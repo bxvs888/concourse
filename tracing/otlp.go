@@ -1,6 +1,8 @@
 package tracing
 
 import (
+	"context"
+
 	"go.opentelemetry.io/otel/exporters/otlp"
 	export "go.opentelemetry.io/otel/sdk/export/trace"
 	"google.golang.org/grpc/credentials"
@@ -27,15 +29,13 @@ func (s OTLP) security() otlp.ExporterOption {
 }
 
 // Exporter returns a SpanExporter to sync spans to OTLP
-func (s OTLP) Exporter() (export.SpanSyncer, error) {
-	options := []otlp.ExporterOption{
+func (s OTLP) Exporter() (export.SpanExporter, error) {
+	driver := otlp.NewGRPCDriver(
 		otlp.WithAddress(s.Address),
 		otlp.WithHeaders(s.Headers),
 		s.security(),
-	}
-
-	exporter, err := otlp.NewExporter(options...)
-
+	)
+	exporter, err := otlp.NewExporter(context.TODO(), driver)
 	if err != nil {
 		return nil, err
 	}

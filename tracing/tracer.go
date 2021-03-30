@@ -14,9 +14,9 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 go.opentelemetry.io/otel/api/trace.Tracer
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 go.opentelemetry.io/otel/api/trace.Provider
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 go.opentelemetry.io/otel/api/trace.Span
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 go.opentelemetry.io/otel/trace.Tracer
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 go.opentelemetry.io/otel/trace.TracerProvider
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 go.opentelemetry.io/otel/trace.Span
 
 // Configured indicates whether tracing has been configured or not.
 //
@@ -49,7 +49,7 @@ func (c Config) resource() *resource.Resource {
 	return resource.New(attributes...)
 }
 
-func (c Config) TraceProvider(exporter func() (export.SpanSyncer, error)) (trace.TracerProvider, error) {
+func (c Config) TraceProvider(exporter func() (export.SpanExporter, error)) (trace.TracerProvider, error) {
 	exp, err := exporter()
 	if err != nil {
 		return nil, err
